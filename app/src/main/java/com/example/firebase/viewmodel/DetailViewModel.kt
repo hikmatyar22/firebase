@@ -34,4 +34,33 @@ class DetailViewModel(
         getSatuSiswa()
     }
 
+    fun getSatuSiswa() {
+        viewModelScope.launch {
+            statusUIDetail = StatusUIDetail.Loading
+            statusUIDetail = try {
+                val siswa = repositorySiswa.getSatuSiswa(idSiswa)
+
+                if (siswa != null) {
+                    StatusUIDetail.Success(siswa)
+                } else {
+                    StatusUIDetail.Error
+                }
+
+            } catch (e: IOException) {
+                StatusUIDetail.Error
+            } catch (e: Exception) {
+                StatusUIDetail.Error
+            }
+        }
+    }
+
+
+    suspend fun hapusSatuSiswa() {
+        try {
+            repositorySiswa.hapusSatuSiswa(idSiswa)
+            println("Sukses Hapus Data: $idSiswa")
+        } catch (e: Exception) {
+            println("Gagal Hapus Data: ${e.message}")
+        }
+    }
 }
