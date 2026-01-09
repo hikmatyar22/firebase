@@ -78,7 +78,7 @@ fun HomeScreen(
             statusUiSiswa = viewModel.statusUiSiswa,
             onSiswaClick = navigateToItemUpdate,
             retryAction = viewModel::loadSiswa,
-            modifier = modifier
+            modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         )
@@ -98,16 +98,11 @@ fun HomeBody(
     ) {
         when (statusUiSiswa) {
             is StatusUiSiswa.Loading -> LoadingScreen()
-            is StatusUiSiswa.Success ->
-                DaftarSiswa(
-                    itemSiswa = statusUiSiswa.siswa,
-                    onSiswaClick = { onSiswaClick(it.id.toInt()) }
-                )
-            is StatusUiSiswa.Error ->
-                ErrorScreen(
-                    retryAction,
-                    modifier = modifier.fillMaxSize()
-                )
+            is StatusUiSiswa.Success -> DaftarSiswa(
+                itemsSiswa = statusUiSiswa.siswa,
+                onSiswaClick = { onSiswaClick(it.id.toInt()) }
+            )
+            is StatusUiSiswa.Error -> ErrorScreen(retryAction)
         }
     }
 }
@@ -143,12 +138,15 @@ fun ErrorScreen(
 
 @Composable
 fun DaftarSiswa(
-    itemSiswa: List<Siswa>,
+    itemsSiswa: List<Siswa>,
     onSiswaClick: (Siswa) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = itemSiswa, key = { it.id }) { person ->
+        items(
+            items = itemsSiswa,
+            key = { it.id }
+        ) { person ->
             ItemSiswa(
                 siswa = person,
                 modifier = Modifier
@@ -174,7 +172,9 @@ fun ItemSiswa(
                 dimensionResource(id = R.dimen.padding_small)
             )
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
                     text = siswa.nama,
                     style = MaterialTheme.typography.titleLarge
